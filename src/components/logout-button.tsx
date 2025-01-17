@@ -12,7 +12,7 @@ export function LogoutButton({
       onPress={onPress}
       className="size-12 rounded-full bg-brown_900 items-center justify-center"
     >
-      <Power size={20} color="#1E1E1E"/>
+      <Power size={20} color="#FFF"/>
     </TouchableOpacity>
   )
 }

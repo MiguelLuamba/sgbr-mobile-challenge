@@ -1,10 +1,10 @@
-import { useAppContext } from "@/context/app-context";
-import { removeLocalData } from "@/store/data-store";
+import { useState } from "react";
 import { router } from "expo-router";
 import { TriangleAlert } from "lucide-react-native";
-import { useState } from "react";
-import { ActivityIndicator, Alert, StyleSheet } from "react-native";
+import { removeLocalData } from "@/store/data-store";
+import { useAppContext } from "@/context/app-context";
 import { Modal, View, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet } from "react-native";
 
 interface ModalProps {
   visible: boolean
@@ -15,9 +15,10 @@ export function LogOutModal({
   closeModal
 }: ModalProps){
 
-  const [isLoading, setIsLoading] = useState(false)
   const appContext = useAppContext()
+  const [isLoading, setIsLoading] = useState(false)
 
+  // CLEAN LOCALSTORAGE AND CONTEXT API
   async function logout(){
     try {
       setIsLoading(true)
@@ -51,10 +52,11 @@ export function LogOutModal({
             <Text className="font-rubik text-2xl text-light text-center">DESEJA MESMO </Text>
             <Text className="font-rubik text-2xl text-light text-center">TERMINAR SESSÃO?</Text>
           </View>
+
+
           {/* BUTTONS */}
-
           <View className="w-full gap-2 flex-row items-center">
-
+            {/* CANCEL BUTTON */}
             <TouchableOpacity 
               onPress={closeModal}
               activeOpacity={0.7}
@@ -62,6 +64,7 @@ export function LogOutModal({
               <Text className="text-light font-rubik text-lg">CANCELAR</Text>
             </TouchableOpacity>
 
+            {/* CONFIRM BUTTON */}
             <TouchableOpacity 
               activeOpacity={0.7}
               onPress={logout}
@@ -70,7 +73,6 @@ export function LogOutModal({
                   ?<ActivityIndicator size="small" color="#fff"/>
                   :<Text className="text-light font-rubik text-lg">CONFIRMAR</Text>
                 }
-              
             </TouchableOpacity>
           </View>
 

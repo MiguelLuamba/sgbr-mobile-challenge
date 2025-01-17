@@ -1,16 +1,13 @@
 import { Slot } from "expo-router";
-import { ActivityIndicator, Text, View } from "react-native"
+import { AppProvider } from "@/context/app-context";
+import { ScreenLoading } from "@/components/screen-loading";
 import { Rubik_400Regular } from '@expo-google-fonts/rubik';
 import { BebasNeue_400Regular } from '@expo-google-fonts/bebas-neue';
 import { BarlowCondensed_400Regular } from '@expo-google-fonts/barlow-condensed';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
-import { AppProvider, useAppContext } from "@/context/app-context";
-import { getLocalData } from "@/store/data-store";
-import { useState } from "react";
-import { ScreenLoading } from "@/components/screen-loading";
 
 export default function RootLayout() {
-
+  // LOAD FONTS
   const [fontsLoaded] = useFonts({
     PoppinsRegular: Poppins_400Regular,
     PoppinsBold: Poppins_700Bold,
@@ -19,10 +16,12 @@ export default function RootLayout() {
     Rubik: Rubik_400Regular,
   });
 
+  // WHILE LOADING FONTS RENDER LOADING SCREEN
   if(!fontsLoaded) {
     return <ScreenLoading/>
   }
-
+  
+  // AFTER LOADING FONTS RENDER MAIN ROUTE
   return (
     <AppProvider>
       <Slot />

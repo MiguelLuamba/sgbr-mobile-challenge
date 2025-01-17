@@ -1,14 +1,14 @@
-import { LogoutButton } from "@/components/logout-button";
-import { MarkCarCard } from "@/components/mark-car-card";
-import { StatusBar } from "expo-status-bar";
 import axios from "axios";
-import { list_mark_cars } from "@/utils/app.constants";
-import { Search } from "lucide-react-native";
-import { useEffect, useState } from "react";
-import { FlatList, Image, Text, TextInput, View, ActivityIndicator, RefreshControl } from "react-native";
-import { useAppContext } from "@/context/app-context";
-import { LogOutModal } from "@/components/logout-modal";
 import { Redirect } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import { Search } from "lucide-react-native";
+import { useAppContext } from "@/context/app-context";
+import { list_mark_cars } from "@/utils/app.constants";
+import { LogOutModal } from "@/components/logout-modal";
+import { MarkCarCard } from "@/components/mark-car-card";
+import { LogoutButton } from "@/components/logout-button";
+import { FlatList, Image, Text, TextInput, View, ActivityIndicator, RefreshControl, BackHandler, Alert } from "react-native";
 
 interface MarkCarsData {
   nome: string;
@@ -16,13 +16,14 @@ interface MarkCarsData {
 }
 
 export default function Home() {
-  const [loading, setLoading] = useState<boolean>(false); // Carregamento inicial
-  const [refreshing, setRefreshing] = useState<boolean>(false); // Para "pull-to-refresh"
-  const [carsMark, setCarsMark] = useState<MarkCarsData[]>([]); // Dados da API
-  const [filteredCars, setFilteredCars] = useState<MarkCarsData[]>([]); // Dados filtrados pela busca
-  const [searchQuery, setSearchQuery] = useState<string>(""); // Termo de busca
+  const appContext = useAppContext()
+  const [loading, setLoading] = useState<boolean>(false); // INITIAL LOADING
+  const [searchQuery, setSearchQuery] = useState<string>(""); // SEARCH PARAMETER
+  const [carsMark, setCarsMark] = useState<MarkCarsData[]>([]); // API DATA
+  const [refreshing, setRefreshing] = useState<boolean>(false); // LOAD TO "pull-to-refresh"
+  const [visibleLogoutModal, setVisibleLogoutModal] = useState(false) // MODAL CONTROLLER
+  const [filteredCars, setFilteredCars] = useState<MarkCarsData[]>([]); // FILTERED DATA FROM API
 
-  const [visibleLogoutModal, setVisibleLogoutModal] = useState(false)
 
   function showLogoutModal(){
     setVisibleLogoutModal(true) 
@@ -32,16 +33,14 @@ export default function Home() {
     setVisibleLogoutModal(false) 
   }
 
-  const appContext = useAppContext()
-
-  // Função para buscar os dados da API
+  // GET API DATA
   const getAllMarkOfCarsFromDatabase = async () => {
     setLoading(true);
     try {
       const response = await axios.get(list_mark_cars);
       if (response.status === 200) {
         setCarsMark(response.data);
-        setFilteredCars(response.data); // Exibe todos os dados inicialmente
+        setFilteredCars(response.data);
       }
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
@@ -50,18 +49,18 @@ export default function Home() {
     }
   };
 
-  // Atualiza os dados ao fazer "pull-to-refresh"
+  // DATA UPDATING "pull-to-refresh"
   const onRefresh = async () => {
     setRefreshing(true);
     await getAllMarkOfCarsFromDatabase();
     setRefreshing(false);
   };
 
-  // Função de busca
+  // SEARCH MODEL WITH INITIAL NAME
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query.trim() === "") {
-      setFilteredCars(carsMark); // Se o campo de busca estiver vazio, exibe todos os dados
+      setFilteredCars(carsMark);
     } else {
       const filtered = carsMark.filter((car) =>
         car.nome.toLowerCase().startsWith(query.toLowerCase())
@@ -70,14 +69,40 @@ export default function Home() {
     }
   };
 
-  // Busca inicial dos dados
+  // IF USER NOT LOGGED REDIRECT TO MAIN ROUTE
+  if(!appContext.user?.id) {
+    return <Redirect href="/"/>
+  }
+
+  
   useEffect(() => {
     getAllMarkOfCarsFromDatabase();
   }, []);
 
-  if(!appContext.user?.id) {
-    return <Redirect href="/"/>
-  }
+  // OUT OF APP IF CLICK ON BACK BUTTON
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Sair do Aplicativo", "Tem certeza que deseja sair?", [
+        {
+          text: "Cancelar",
+          onPress: () => null,
+          style: "cancel",
+        },
+        {
+          text: "Sim",
+          onPress: () => BackHandler.exitApp(), // OUT OFF APLICATION
+        },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove(); // Remove o listener ao desmontar o componente
+  }, []);
 
   return (
     <View className="flex-1 items-center justify-start bg-dark_900 px-5 pt-5 gap-5">
@@ -152,7 +177,7 @@ export default function Home() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             ListEmptyComponent={
-              <Text className="text-light text-center">
+              <Text className="text-gray_900 text-center w-full mt-6">
                 Nenhuma marca encontrada.
               </Text>
             }

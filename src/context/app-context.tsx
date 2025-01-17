@@ -17,8 +17,10 @@ interface AppProviderProps {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  // Corrigido: Tipagem do estado do user
+// CREATE CONTEXT PROVIDER
+export function AppProvider({ 
+  children 
+}: AppProviderProps) {
   const [user, setUser] = useState<UserProps | null>(null);
 
   return (

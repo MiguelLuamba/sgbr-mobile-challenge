@@ -1,49 +1,50 @@
 import "@/styles/global.css";
-import { ChevronsRight } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import { Redirect, router } from "expo-router";
-import { useAppContext } from "@/context/app-context";
-import { getLocalData } from "@/store/data-store";
 import { useEffect, useState } from "react";
+import { Redirect, router } from "expo-router";
+import { getLocalData } from "@/store/data-store";
+import { ChevronsRight } from "lucide-react-native";
+import { useAppContext } from "@/context/app-context";
 import { ScreenLoading } from "@/components/screen-loading";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+
 
 export default function Welcome() {
   const appContext = useAppContext();
-  const [loadingLocalData, setLoadingLocalData] = useState(true); // Por padrão, está carregando
+  const [loadingLocalData, setLoadingLocalData] = useState(true); 
 
   useEffect(() => {
     async function verifyLocalData() {
       try {
         const data = await getLocalData("user-data");
         if (data) {
-          appContext.setUser(data); // Atualiza apenas se houver dados
+          appContext.setUser(data);
         }
       } catch (error) {
         console.error("Error fetching local data:", error);
       } finally {
-        setLoadingLocalData(false); // Sempre finaliza o carregamento
+        setLoadingLocalData(false);
       }
     }
 
-    verifyLocalData(); // Chama a função apenas uma vez
-  }, []); // Dependências vazias garantem que execute apenas na montagem
+    verifyLocalData();
+  }, []); 
 
   const goToLoginScreen = () => {
     router.push("/(auth)/login");
   };
 
-  // Enquanto estiver carregando, exibe o componente de loading
+  // LOADING SCREEN WHILE FONTSLOADING
   if (loadingLocalData) {
     return <ScreenLoading />;
   }
 
-  // Se o usuário já está autenticado, redireciona para a tela inicial
+  // REDIRECT TO HOME IF ALREADY LOGGED
   if (appContext.user?.id) {
     return <Redirect href="/home" />;
   }
 
-  // Caso contrário, exibe a tela de boas-vindas
+  // RENDER MAIN SCREEN
   return (
     <View className="flex-1 items-center justify-end bg-dark_900 pb-8">
       <StatusBar backgroundColor="#161616" />

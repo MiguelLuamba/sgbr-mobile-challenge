@@ -1,18 +1,17 @@
-import { signin_user_url } from "@/utils/app.constants";
 import axios from "axios";
-
-import { StatusBar } from "expo-status-bar";
-import { ChevronsRight, LockKeyhole, User } from "lucide-react-native";
 import { useState } from "react";
-import { useForm, Controller } from 'react-hook-form';
 import { Alert } from "react-native";
-import { ActivityIndicator } from "react-native";
+import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { TouchableOpacity } from "react-native";
+import { ActivityIndicator } from "react-native";
+import { setStoreData } from "@/store/data-store";
+import { useForm, Controller } from 'react-hook-form';
+import { useAppContext } from "@/context/app-context";
+import { signin_user_url } from "@/utils/app.constants";
 import { ScrollView, Text, TextInput, View } from "react-native";
 import { ErrorComponentLogin } from "../../components/error-login";
-import { setStoreData } from "@/store/data-store";
-import { useAppContext } from "@/context/app-context";
-import { router } from "expo-router";
+import { ChevronsRight, LockKeyhole, User } from "lucide-react-native";
 
 
 interface LoginFormInputs {
@@ -35,11 +34,12 @@ export default function Login(){
     formState: { errors }
   } = useForm<LoginFormInputs>();
 
+  //VALIDATE USER DATA
   const onSubmit = (data: LoginFormInputs) => {
     verifyUserCredentials(data)
-    // Aqui você pode chamar um endpoint ou salvar o estado
   };
 
+  // FETCH USER DATA
   async function verifyUserCredentials(data: any){
     try {
       setIsLoading(true)
@@ -62,7 +62,6 @@ export default function Login(){
         }
       }
       
-
     } catch (error) {
       setError({
         message:"Usuário e/ou senha inválido(s)",
@@ -76,6 +75,7 @@ export default function Login(){
     }
   }
 
+  // ADD TIMING TO CLOSE ERROR LOGIN MODAL
   function closeModal() {
     setTimeout(() => {
       setError(null)
@@ -215,11 +215,8 @@ export default function Login(){
         </Text>
       </View>
 
-
+      {/* ERROR LOGIN MODAL */}
       {error?.status && <ErrorComponentLogin error={error.message} status={error.status} />}
     </View>
   )
 }
-
-
-
