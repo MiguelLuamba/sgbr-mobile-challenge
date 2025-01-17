@@ -9,11 +9,10 @@ interface ModelCarCardsProps {
 }
 
 export function ModelCarCard({ name, code }: ModelCarCardsProps) {
-  // Ref para animação
   const scaleValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Animação de crescimento ao renderizar
+    // SCALE ANIMATION
     Animated.spring(scaleValue, {
       toValue: 1,
       friction: 5,
@@ -36,7 +35,7 @@ export function ModelCarCard({ name, code }: ModelCarCardsProps) {
 
         <Text
           className="font-poppinsBold text-base text-left text-light relative"
-          numberOfLines={2}
+          numberOfLines={4}
           ellipsizeMode="tail"
         >
           {name}

@@ -40,7 +40,7 @@ export function MarkCarCard({ name, code }: MarkCarCardProps) {
         onPress={() => viewSpecifyModelsOfCars(code, name)}
         className={`w-[160] h-[190] ${
           isHighlighted ? "bg-purple_900" : "bg-dark_700"
-        } rounded-3xl p-4 relative`}
+        } rounded-3xl p-4 relative z-50`}
       >
         {/* TOP ENFASE ELEMENT */}
         <View className="flex-row items-start justify-between">

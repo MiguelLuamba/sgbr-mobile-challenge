@@ -84,6 +84,20 @@ export default function Model(){
         <LogoutButton onPress={showLogoutModal}/>
       </View>
 
+
+      {/* 3D CIRCLES BACKGROUND */}
+      <View className="absolute left-[22] top-[15%] -z-0">
+        <RadialCircle first_color="#6FFFF3" second_color="#37958E" third_color="#186B64"/>
+      </View>
+
+      <View className="absolute right-[22] top-[42.5%] -z-0">
+        <RadialCircle  first_color="#BC7777" second_color="#AB2525" third_color="#713131"/>
+      </View>
+
+      <View className="absolute left-[22] top-[70%] -z-0">
+        <RadialCircle first_color="#A998FF" second_color="#634AE1" third_color="#483995" />
+      </View>
+
       {/* LIST ALL MODELS */}
       {loading ?(
         <ActivityIndicator size="large" color="#ffffff" />
@@ -120,20 +134,6 @@ export default function Model(){
       /> 
 
 
-
-      {/* 3D CIRCLES BACKGROUND */}
-
-      <View className="absolute left-[22] top-[15%] -z-0">
-        <RadialCircle first_color="#6FFFF3" second_color="#37958E" third_color="#186B64"/>
-      </View>
-
-      <View className="absolute right-[22] top-[42.5%] -z-0">
-        <RadialCircle  first_color="#BC7777" second_color="#AB2525" third_color="#713131"/>
-      </View>
-
-      <View className="absolute left-[22] top-[70%] -z-0">
-        <RadialCircle first_color="#A998FF" second_color="#634AE1" third_color="#483995" />
-      </View>
 
   
     </View>
