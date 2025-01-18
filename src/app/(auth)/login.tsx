@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 import { Alert } from "react-native";
 import { router } from "expo-router";
@@ -40,39 +39,41 @@ export default function Login(){
   };
 
   // FETCH USER DATA
-  async function verifyUserCredentials(data: any){
-    try {
+  async function verifyUserCredentials(data: LoginFormInputs){
+   
       setIsLoading(true)
-      const response = await axios.post(signin_user_url, data)
-      if(response.data.error === true){
-        setError({
-          message: String(response.data.message),
-          status: true
-        })
-        closeModal()
-      }
-
-      if(!response.data.error){
-        const dataLocalStore = await setStoreData("user-data", response.data.user)
-        if(dataLocalStore === "sucess"){
-          appContext.setUser(response.data.user)
-          router.push("/home")
-        }else {
-          Alert.alert("Aviso", "Alguma coisa deu errado, tente mais tarde!")
-        }
-      }
-      
-    } catch (error) {
-      setError({
-        message:"Usuário e/ou senha inválido(s)",
-        status: true
+      await fetch(signin_user_url, {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify(data),
       })
-
-      closeModal()
-
-    } finally {
-      setIsLoading(false)
-    }
+      .then(response => response.json())
+      .then(async (data) =>{
+        if(data.error){
+          setError({
+            message: String(data.message),
+            status: true
+          })
+          return closeModal()
+        }
+        if(!data.error){
+          const dataLocalStore = await setStoreData("user-data", data.user)
+          if(dataLocalStore === "sucess"){
+            appContext.setUser(data.user)
+            router.push("/home")
+          }else {
+            Alert.alert("Aviso", "Alguma coisa deu errado, tente mais tarde!")
+          }
+        }
+      })
+      .catch(error =>{
+        Alert.alert("Erro","O servidor não responde, verifique sua internet ou tente mais tarde!")
+      })
+      .finally(()=>{
+        setIsLoading(false)
+      });
   }
 
   // ADD TIMING TO CLOSE ERROR LOGIN MODAL
