@@ -165,6 +165,7 @@ export default function Home() {
               gap: 2,
               flexDirection: "row",
               flexWrap: "wrap",
+              rowGap: 10,
               justifyContent: "space-between",
               paddingVertical: 10,
             }}
